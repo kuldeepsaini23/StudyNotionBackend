@@ -232,7 +232,11 @@ exports.login = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Login failure, Please try again",
+<<<<<<< HEAD
     }); 
+=======
+    });
+>>>>>>> 9570b88abee54c65c3669a520575522318207581
   }
 };
 
