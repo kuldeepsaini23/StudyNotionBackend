@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongosse.Schema({
+const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
@@ -16,7 +16,7 @@ const userSchema = new mongosse.Schema({
     required: true,
     trim: true,
   },
-  contactNumber:{
+  contactNumber: {
     type: Number,
     trim: true,
   },
@@ -34,22 +34,28 @@ const userSchema = new mongosse.Schema({
     required: true,
     ref: "Profile",
   },
-  courses:[
+  courses: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
-    }
+    },
   ],
-  image:{
-    type:String,
-    required:true,
+  image: {
+    type: String,
+    required: true,
   },
-  courseProgress:[
+  courseProgress: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "CourseProgress",
-    }
-  ]
+    },
+  ],
+  token: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);
