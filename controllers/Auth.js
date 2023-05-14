@@ -232,12 +232,8 @@ exports.login = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Login failure, Please try again",
-
-    }); 
-
-    }
-
-  
+    });
+  }
 };
 
 //change Password
@@ -251,17 +247,31 @@ exports.changePassword = async (req, res) => {
     const { oldPassword, newPassword, confirmPassword } = req.body;
 
     //validation
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New Password and Confirm Password are Not Same",
+      });
+    }
+
+    if (oldPassword === newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Old Password and new password are same",
+      });
+    }
+
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "New Password and Confirm Password are Not Same",
       });
     }
     if (await bcrypt.compare(oldPassword, user.password)) {
       //hashing new password
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       //update pwd in DB
-      user.password = hashedPassword;
+      await user.update({password:hashedPassword});
     }
 
     //send Mail - password
@@ -276,5 +286,11 @@ exports.changePassword = async (req, res) => {
       success: true,
       message: "Password reset Successfully",
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error while Login", error);
+    return res.status(500).json({
+      success: false,
+      message: "Login failure, Please try again",
+    });
+  }
 };
