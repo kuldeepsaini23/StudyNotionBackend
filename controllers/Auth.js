@@ -271,7 +271,13 @@ exports.changePassword = async (req, res) => {
       //hashing new password
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       //update pwd in DB
-      await user.update({password:hashedPassword});
+      //*Method one
+      // await user.update({password:hashedPassword});
+
+      //* 2 method
+      user.password = hashedPassword
+      await user.save();
+
     }
 
     //send Mail - password
