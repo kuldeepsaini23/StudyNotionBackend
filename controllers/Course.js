@@ -72,7 +72,7 @@ exports.createCourse = async (req, res) => {
 
     //user update  / add this course in user schema of instructor
     await User.findByIdAndUpdate(
-      { _id: instructorDetails._id},
+      { _id: instructorDetails._id },
       {
         $push: {
           courses: newCourse._id,
@@ -117,11 +117,12 @@ exports.showAllCourses = async (req, res) => {
         instructor: true,
         price: true,
         thumbnail: true,
-        ratingAndReviews:true,
-        studentsEnrolled:true,
+        ratingAndReviews: true,
+        studentsEnrolled: true,
       }
-    ).populate("instructor")
-    .exec();
+    )
+      .populate("instructor")
+      .exec();
 
     res.status(200).json({
       success: true,
@@ -135,4 +136,25 @@ exports.showAllCourses = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+exports.getCourse = async (req, res) => {
+  try {
+    //getting course id in req
+    const {courseId} = req.body;
+
+    //validate
+    if(!courseId){
+      return res.status(400).json({
+        success: false,
+        message: "Course details not found",
+      });
+    }
+
+    //finding course
+    const courseDetails = await Course.findById(courseId).populate('instructor',);
+
+    //return response
+
+  } catch (error) {}
 };
