@@ -1,8 +1,8 @@
-const Tag = require("../models/Tags");
+const Category = require("../models/Categories");
 
-//create tag ka hanfler function
+//create Category ka hanfler function
 
-exports.createTag = async (req, res) => {
+exports.createCategory = async (req, res) => {
   try {
     //fetch data
     const { name, description } = req.body;
@@ -16,19 +16,19 @@ exports.createTag = async (req, res) => {
     }
 
     //create entry in db
-    const tagsDetails = await Tag.create({
+    const categoriesDetails = await Category.create({
       name: name,
       description: description,
     });
-    console.log(tagsDetails);
+    console.log(categoriesDetails);
 
     // Return Response
     return res.status(200).json({
       success: true,
-      message: "Tag created successfully",
+      message: "Category created successfully",
     });
   } catch (error) {
-    console.log("Error while Tag Creating", error);
+    console.log("Error while Category Creating", error);
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -37,19 +37,19 @@ exports.createTag = async (req, res) => {
 };
 
 
-exports.getAllTags = async (req, res) => {
+exports.getAllCategories = async (req, res) => {
   try{
 
-    const allTags = await Tag.find({}, {name:true, description:true});
+    const allCategories = await Category.find({}, {name:true, description:true});
 
     res.status(200).json({
       success:true,
-      message:"All tags return successfully",
-      allTags,
+      message:"All Categories return successfully",
+      allCategories,
     })
 
   }catch(error){
-    console.log("Error while getting all Tags", error);
+    console.log("Error while getting all Categories", error);
     return res.status(500).json({
       success: false,
       message: error.message,

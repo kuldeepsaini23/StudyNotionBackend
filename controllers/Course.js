@@ -1,13 +1,13 @@
 const Course = require("../models/Course");
 const User = require("../models/User");
-const Tag = require("../models/Tags");
+const Category = require("../models/Categories");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 //course create
 exports.createCourse = async (req, res) => {
   try {
     //fetch data
-    const { courseName, courseDescription, whatYouWillLearn, price, tag } =
+    const { courseName, courseDescription, whatYouWillLearn, price, category } =
       req.body;
 
     //get file
@@ -19,7 +19,7 @@ exports.createCourse = async (req, res) => {
       !courseDescription ||
       !whatYouWillLearn ||
       !price ||
-      !tag ||
+      !category ||
       !thumbnail
     ) {
       return res.status(400).json({
@@ -41,15 +41,15 @@ exports.createCourse = async (req, res) => {
       });
     }
 
-    //fetch tag
-    //*tag we getting from req.body is id
-    const tagDetails = await Tag.findById(tag);
+    //fetch category
+    //*category we getting from req.body is id
+    const categoryDetails = await Category.findById(category);
     //validate
 
-    if (!tag) {
+    if (!category) {
       return res.status(400).json({
         success: false,
-        message: "Tag details not found",
+        message: "category details not found",
       });
     }
 
@@ -66,7 +66,7 @@ exports.createCourse = async (req, res) => {
       instructor: instructorDetails._id,
       whatYouWillLearn,
       price,
-      tag: tagDetails._id,
+      category: categoryDetails._id,
       thumbnail: thumbnail.secure_url,
     });
 
@@ -81,9 +81,9 @@ exports.createCourse = async (req, res) => {
       { new: true }
     );
 
-    //update tag hw
-    await Tag.findByIdAndUpdate(
-      tag,
+    //update category hw
+    await Category.findByIdAndUpdate(
+      category,
       {
         $push: {
           course: newCourse._id,
@@ -110,7 +110,7 @@ exports.createCourse = async (req, res) => {
 //get all courses
 exports.showAllCourses = async (req, res) => {
   try {
-    const allCourses = await Tag.find(
+    const allCourses = await Course.find(
       {},
       {
         courseName: true,
