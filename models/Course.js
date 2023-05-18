@@ -37,9 +37,9 @@ const courseSchema = new mongosse.Schema({
   thumnil:{
     type:String,
   },
-  tag:{
+  category:{
     type:mongoose.Schema.Types.ObjectId,
-    ref:"Tag",
+    ref:"Category",
   },
   studentsEnrolled:[{
     type:mongoose.Schema.Types.ObjectId,

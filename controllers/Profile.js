@@ -1,5 +1,6 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
+const Course = require("../models/Course");
 
 exports.updateProfile = async (req, res) => {
   try {
@@ -74,6 +75,13 @@ exports.deleteProfile = async (req, res) => {
     await Profile.findByIdAndDelete({ _id: userDetails.additionalDetails });
 
     //TODO: unroll user from all the rolled course
+    await Course.findByIdAndUpdate(
+      { _id: userDetails.additionalDetails },
+      { $pull: 
+        { enrolledStudents: User._id } 
+      },
+      {new:true},
+    );
 
     //delete user
     await User.findByIdAndDelete({ _id: id });
@@ -108,7 +116,9 @@ exports.getUserDetails = async (req, res) => {
     }
 
     //find user details
-    const userDetails = await User.findById(id).populate("additionalDetails").exec();
+    const userDetails = await User.findById(id)
+      .populate("additionalDetails")
+      .exec();
 
     //return response
     return res.status(200).json({
