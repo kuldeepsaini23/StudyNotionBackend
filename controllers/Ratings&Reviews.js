@@ -53,7 +53,6 @@ exports.createRating = async (req, res) => {
 };
 
 
-
 exports.showAllRating = async (req, res) => {
  try{
   const allRating = await RatingAndReview.find(
@@ -79,3 +78,28 @@ exports.showAllRating = async (req, res) => {
   });
  }
 }
+
+exports.showCourseAllRating = async (req, res) => {
+  try{
+   const allCourseRating = await Course.find(
+     {},
+     {
+       courseName: true,
+     }
+   )
+     .populate("ratingAndReviews")
+     .exec();
+ 
+   res.status(200).json({
+     success: true,
+     message: "All Rating of a Course return successfully",
+     allCourses,
+   });
+  }catch(error){
+   console.log("Error while getting all Rating", error);
+   return res.status(500).json({
+     success: false,
+     message: error.message,
+   });
+  }
+ }
