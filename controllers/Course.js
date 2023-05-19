@@ -141,10 +141,10 @@ exports.showAllCourses = async (req, res) => {
 exports.getCourse = async (req, res) => {
   try {
     //getting course id in req
-    const {courseId} = req.body;
+    const { courseId } = req.body;
 
     //validate
-    if(!courseId){
+    if (!courseId) {
       return res.status(400).json({
         success: false,
         message: "Course details not found",
@@ -152,9 +152,25 @@ exports.getCourse = async (req, res) => {
     }
 
     //finding course
-    const courseDetails = await Course.findById(courseId).populate('instructor',);
+    const courseDetails = await Course.findById(courseId)
+      .populate("instructor")
+      .populate("courseContent")
+      .populate("ratingAndReviews")
+      .populate("category")
+      .populate("studentsEnrolled");
+
+      res.status(200).json({
+        success: true,
+        message: "Course with provided courseId return successfully",
+        courseDetails,
+      });
 
     //return response
-
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error while getting one Courses", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
