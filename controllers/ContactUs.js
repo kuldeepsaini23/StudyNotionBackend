@@ -1,26 +1,29 @@
 const Contact = require("../models/ContactUs");
-const { mailSender } = require("../utlis/mailSender");
+const  mailSender  = require("../utils/mailSender");
+const {contactusResponsetemplate} = require("../mail/templates/contactusResponsetemplate")
 
 //creating contact handler
 exports.contact = async (req, res) => {
   try {
     //getting data from req.body
-    const { firstName, lastName, email, phoneNumber, message } = req.body;
+    const {countrycode,email, firstName, lastName, message, phoneNo } =
+      req.body;
 
     //validate
-    if (!phoneNumber || !lastName || !email || !phoneNumber || !phoneNumber) {
+    if (!firstName || !email || !phoneNo || !message) {
       return res.status(400).json({
         success: false,
         message: "All fileds are needed",
       });
     }
-
+    const processedLastName = lastName ? lastName : "";
+  
     //saving data in db
     const contactDetails = await Contact.create({
       firstName: firstName,
-      lastName: lastName,
+      lastName: processedLastName,
       email: email,
-      phoneNumber: phoneNumber,
+      phoneNumber: `${countrycode}-${phoneNo}`,
       message: message,
     });
 
@@ -31,28 +34,24 @@ exports.contact = async (req, res) => {
       });
     }
 
-    // const mailSendToUser = await mailSender(
-    //   contactDetails.email,
-    //   "Successfull",
-    //   "Your Response is recieved by us we will try to response you as early as possible"
-    // );
+    const mailSendToUser = await mailSender(
+      contactDetails.email,
+      "Successfull",
+      contactusResponsetemplate(contactDetails)
+    );
 
-    // if(!mailSendToUser){
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Mail to user isnot send Successfully",
-    //   });
-    // }
+    if(!mailSendToUser){
+      return res.status(400).json({
+        success: false,
+        message: "Mail to user is not send Successfully",
+      });
+    }
 
-    // const mailSendToMe = await mailSender(
-    //   `aktdeku@gmail.com`,
-    //   "You got a Response!!",
-    //   `<h1>The Response</h1>
-    //     <div>
-    //     <p>${contactDetails}</p>
-    //     </div>
-    //   `
-    // );
+    const mailSendToMe = await mailSender(
+      `aktdeku@gmail.com`,
+      "You got a Response!!",
+      contactusResponsetemplate(contactDetails)
+    );
 
     //return respones
     res.status(200).json({
