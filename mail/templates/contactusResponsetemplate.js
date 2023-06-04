@@ -49,10 +49,11 @@ exports.contactusResponsetemplate = (doc) => {
   
           .info_container{
             border: 1px solid #61636a;
+            border-radius: 20px;
             max-width: 400px;
             margin: 0 auto;
             padding: 10px;
-            text: center;
+            text-align: center;
         }
         
         .inside_cont{
@@ -70,11 +71,11 @@ exports.contactusResponsetemplate = (doc) => {
       <div class="container">
           <a href="https://studynotion-edtech-project.vercel.app"><img class="logo"
                   src="https://i.ibb.co/7Xyj3PC/logo.png" alt="StudyNotion Logo"></a>
-          <div class="message">Response Confirmation</div>
+          <div class="message">Contact Form Confirmation</div>
           <div class="body">
-              <h2>Hey ${firstName} ${lastName},</h2>
-              <h1>Thanks for your response.</h1>
-              <p>The below is your response</p>
+              <h3>Dear ${firstName} ${lastName},</h3>
+              <p>Thank you for contacting us. We have received your message and will respond to you as soon as possible.</p>
+              <p>Here are the details you provided</p>
           </div>
           <div class="info_container">
               <div class="inside_cont">
@@ -97,6 +98,7 @@ exports.contactusResponsetemplate = (doc) => {
                   <h4>Message: ${message}</h4>
               </div>
           </div>
+          <p>We appreciate your interest and will get back to you shortly.</p>
           <div class="support">If you have any questions or need further assistance, please feel free to reach out to us
               at
               <a href="mailto:info@studynotion.com">info@studynotion.com</a>. We are here to help!
