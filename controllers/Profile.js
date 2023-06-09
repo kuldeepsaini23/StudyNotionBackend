@@ -124,7 +124,7 @@ exports.getEnrolledCourses = async (req, res) => {
       })
         .populate("courses")
         .exec()
-      if (!userDetails) {
+      if (!userDetails) { 
         return res.status(400).json({
           success: false,
           message: `Could not find user with id: ${userDetails}`,
