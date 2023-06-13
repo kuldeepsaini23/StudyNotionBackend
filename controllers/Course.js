@@ -198,3 +198,38 @@ exports.getCourseDetails = async (req, res) => {
         });
     }
 }
+
+//getInstructorAllCourses
+exports.getInstructorCourses = async (req, res) => {
+	try{
+		//get Instructor id
+		const userId = req.user.id
+
+		//find instructor by id and populate Courses data
+		const userDetails = await User.findOne({
+			_id: userId,
+		})
+			.populate("courses")
+			.exec()
+
+		//Validation
+		if (!userDetails) { 
+			return res.status(400).json({
+				success: false,
+				message: `Could not find user with id: ${userDetails}`,
+			})
+		}
+
+		//Return Data of Courses of Instructor
+		return res.status(200).json({
+			success: true,
+			data: userDetails.courses,
+		})
+	}catch(error){
+		console.log("Could not able to get Instructor Courses", error);
+		return res.status(500).json({
+				success:false,
+				message:error.message,
+		});
+	}
+}
