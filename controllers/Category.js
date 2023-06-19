@@ -1,5 +1,10 @@
 const Category = require("../models/Category");
 
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max)
+}
+
 exports.createCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -26,33 +31,35 @@ exports.createCategory = async (req, res) => {
 };
 
 exports.showAllCategories = async (req, res) => {
-  try {
-    const allCategorys = await Category.find(
-      {},
-      { name: true, description: true }
-    );
-    res.status(200).json({
-      success: true,
-      data: allCategorys,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+	try {
+        console.log("INSIDE SHOW ALL CATEGORIES");
+		const allCategorys = await Category.find({});
+		res.status(200).json({
+			success: true,
+			data: allCategorys,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: error.message,
+		});
+	}
 };
 
-//categoryPageDetails
 
+//categoryPageDetails
 exports.categoryPageDetails = async (req, res) => {
   try {
     //get categoryId
     const { categoryId } = req.body;
     //get courses for specified categoryId
     const selectedCategory = await Category.findById(categoryId)
-      .populate("courses")
-      .exec();
+    .populate({
+      path: "courses",
+      match: { status: "Published" },
+      populate: "ratingAndReviews",
+    })
+    .exec()
 
     //console.log("SELECTED COURSE", selectedCategory)
     // Handle the case when the category is not found
@@ -64,20 +71,41 @@ exports.categoryPageDetails = async (req, res) => {
     }
 
     // Handle the case when there are no courses
-    if (selectedCategory.courses.length === 0) {
-      console.log("No courses found for the selected category.");
-      return res.status(404).json({
-        success: false,
-        message: "No courses found for the selected category.",
-      });
-    }
+    // if (selectedCategory.courses.length === 0) {
+    //   console.log("No courses found for the selected category.");
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "No courses found for the selected category.",
+    //   });
+    // }
 
     //get coursesfor different categories
-    const differentCategories = await Category.find({
+    //*Sending Multiple categories
+    // const differentCategories = await Category.find({
+    //   _id: { $ne: categoryId },
+    // })
+    //   .populate({
+    //     path: "courses",
+    //     match: { status: "Published" },
+    //     populate: {
+    //       path: "instructor",
+    //     },
+    //   })
+    //   .exec();
+
+    //* Only one
+    const categoriesExceptSelected = await Category.find({
       _id: { $ne: categoryId },
     })
-      .populate("courses")
-      .exec();
+    let differentCategory = await Category.findOne(
+      categoriesExceptSelected[getRandomInt(categoriesExceptSelected.length)]
+        ._id
+    )
+      .populate({
+        path: "courses",
+        match: { status: "Published" },
+      })
+      .exec()
 
     //console.log("Different COURSE", differentCategory)
     // Get top-selling courses across all categories
@@ -102,7 +130,7 @@ exports.categoryPageDetails = async (req, res) => {
       success: true,
       data: {
         selectedCategory,
-        differentCategories,
+        differentCategory,
         mostSellingCourses,
       },
     });
