@@ -55,7 +55,7 @@ exports.isStudent = async (req, res, next) => {
  catch(error) {
     return res.status(500).json({
         success:false,
-        message:'User role cannot be verified, please try again'
+        message:'User role(Student) cannot be verified, please try again'
     })
  }
 }
@@ -75,7 +75,7 @@ exports.isInstructor = async (req, res, next) => {
     catch(error) {
        return res.status(500).json({
            success:false,
-           message:'User role cannot be verified, please try again'
+           message:'User role(Instructor) cannot be verified, please try again'
        })
     }
    }
@@ -96,7 +96,7 @@ exports.isAdmin = async (req, res, next) => {
     catch(error) {
        return res.status(500).json({
            success:false,
-           message:'User role cannot be verified, please try again'
+           message:'User role(Admin) cannot be verified, please try again'
        })
     }
    }

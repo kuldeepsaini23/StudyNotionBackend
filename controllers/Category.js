@@ -1,6 +1,7 @@
 const Category = require("../models/Category");
 
 
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max)
 }
@@ -24,7 +25,73 @@ exports.createCategory = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+//Editing a category
+exports.updateCategory = async (req, res) => {
+  try {
+    const { categoryId, name, description } = req.body;
+    const CategorysDetails =  await Category.findById(categoryId);
+    if(!CategorysDetails){
+      return res
+      .status(400)
+      .json({ success: false, message: `Cannot find Category with Id ${categoryId}` });
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      { _id: categoryId },
+      {
+        name: name || CategorysDetails.name,
+        description: description || CategorysDetails.description,
+
+      }
+    );
+
+    res.status(200).json({
       success: true,
+      data: updatedCategory,
+      message: `Updated Successfully`,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+      message: "Server Error",
+    });
+  }
+};
+
+//deleting a category
+exports.deleteCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.body;
+    if (!categoryId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "req.body does not contain CourseId " });
+    }
+
+    const CategorysDetails = await Category.findById(categoryId);
+    if(CategorysDetails.courses.length>0){
+      return res
+      .status(400)
+      .json({ success: true, message: "This Category Conatin mutliple Courses" });
+    }
+
+   await Category.findByIdAndDelete(categoryId)
+    // console.log(CategorysDetails);
+    return res.status(200).json({
+      success: true,
+      message: "Categorys Deleted Successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
       message: error.message,
     });
   }

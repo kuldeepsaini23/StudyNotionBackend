@@ -1,11 +1,11 @@
-const Course = require("../models/Course")
-const Category = require("../models/Category")
-const Section = require("../models/Section")
-const SubSection = require("../models/SubSection")
-const User = require("../models/User")
-const { uploadImageToCloudinary } = require("../utils/imageUploader")
-const CourseProgress = require("../models/CourseProgress")
-const { convertSecondsToDuration } = require("../utils/secToDuration")
+const Course = require("../models/Course");
+const Category = require("../models/Category");
+const Section = require("../models/Section");
+const SubSection = require("../models/SubSection");
+const User = require("../models/User");
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const CourseProgress = require("../models/CourseProgress");
+const { convertSecondsToDuration } = require("../utils/secToDuration");
 
 // Function to create a new course
 exports.createCourse = async (req, res) => {
@@ -19,18 +19,18 @@ exports.createCourse = async (req, res) => {
       courseDescription,
       whatYouWillLearn,
       price,
-      tag:_tag,
+      tag: _tag,
       category,
       status,
-      instructions:_instructions,
+      instructions: _instructions,
     } = req.body;
 
     // Get thumbnail image from request files
     const thumbnail = req.files.thumbnailImage;
 
     // Convert the tag and instructions from stringified Array to Array
-    const tag = JSON.parse(_tag)
-    const instructions = JSON.parse(_instructions)
+    const tag = JSON.parse(_tag);
+    const instructions = JSON.parse(_instructions);
 
     // Check if any of the required fields are missing
     if (
@@ -130,41 +130,41 @@ exports.createCourse = async (req, res) => {
   }
 };
 
-//TODO: Read This 
+//TODO: Read This
 // Edit Course Details
 exports.editCourse = async (req, res) => {
   try {
-    const { courseId } = req.body
-    const updates = req.body
-    const course = await Course.findById(courseId)
+    const { courseId } = req.body;
+    const updates = req.body;
+    const course = await Course.findById(courseId);
 
     if (!course) {
-      return res.status(404).json({ error: "Course not found" })
+      return res.status(404).json({ error: "Course not found" });
     }
 
     // If Thumbnail Image is found, update it
     if (req.files) {
-      console.log("thumbnail update")
-      const thumbnail = req.files.thumbnailImage
+      console.log("thumbnail update");
+      const thumbnail = req.files.thumbnailImage;
       const thumbnailImage = await uploadImageToCloudinary(
         thumbnail,
         process.env.FOLDER_NAME
-      )
-      course.thumbnail = thumbnailImage.secure_url
+      );
+      course.thumbnail = thumbnailImage.secure_url;
     }
 
     // Update only the fields that are present in the request body
     for (const key in updates) {
       if (updates.hasOwnProperty(key)) {
         if (key === "tag" || key === "instructions") {
-          course[key] = JSON.parse(updates[key])
+          course[key] = JSON.parse(updates[key]);
         } else {
-          course[key] = updates[key]
+          course[key] = updates[key];
         }
       }
     }
 
-    await course.save()
+    await course.save();
 
     const updatedCourse = await Course.findOne({
       _id: courseId,
@@ -183,23 +183,22 @@ exports.editCourse = async (req, res) => {
           path: "subSection",
         },
       })
-      .exec()
+      .exec();
 
     res.json({
       success: true,
       message: "Course updated successfully",
       data: updatedCourse,
-    })
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
       error: error.message,
-    })
+    });
   }
-}
-
+};
 
 //Get courses list
 exports.getAllCourses = async (req, res) => {
@@ -217,6 +216,7 @@ exports.getAllCourses = async (req, res) => {
     )
       .populate("instructor")
       .exec();
+
     return res.status(200).json({
       success: true,
       data: allCourses,
@@ -262,7 +262,7 @@ exports.getCourseDetails = async (req, res) => {
       });
     }
 
-		//TODO: Read this
+    //TODO: Read this
     // if (courseDetails.status === "Draft") {
     //   return res.status(403).json({
     //     success: false,
@@ -270,24 +270,24 @@ exports.getCourseDetails = async (req, res) => {
     //   });
     // }
 
-    let totalDurationInSeconds = 0
+    let totalDurationInSeconds = 0;
     courseDetails.courseContent.forEach((content) => {
       content.subSection.forEach((subSection) => {
-        const timeDurationInSeconds = parseInt(subSection.timeDuration)
-        totalDurationInSeconds += timeDurationInSeconds
-      })
-    })
+        const timeDurationInSeconds = parseInt(subSection.timeDuration);
+        totalDurationInSeconds += timeDurationInSeconds;
+      });
+    });
 
-    const totalDuration = convertSecondsToDuration(totalDurationInSeconds)
+    const totalDuration = convertSecondsToDuration(totalDurationInSeconds);
 
-		//return response
+    //return response
     return res.status(200).json({
       success: true,
       data: {
         courseDetails,
         totalDuration,
       },
-    })
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -297,11 +297,10 @@ exports.getCourseDetails = async (req, res) => {
   }
 };
 
-
 exports.getFullCourseDetails = async (req, res) => {
   try {
-    const { courseId } = req.body
-    const userId = req.user.id
+    const { courseId } = req.body;
+    const userId = req.user.id;
     const courseDetails = await Course.findOne({
       _id: courseId,
     })
@@ -319,20 +318,20 @@ exports.getFullCourseDetails = async (req, res) => {
           path: "subSection",
         },
       })
-      .exec()
+      .exec();
 
     let courseProgressCount = await CourseProgress.findOne({
       courseID: courseId,
       userId: userId,
-    })
+    });
 
-    console.log("courseProgressCount : ", courseProgressCount)
+    console.log("courseProgressCount : ", courseProgressCount);
 
     if (!courseDetails) {
       return res.status(400).json({
         success: false,
         message: `Could not find course with id: ${courseId}`,
-      })
+      });
     }
 
     // if (courseDetails.status === "Draft") {
@@ -342,15 +341,15 @@ exports.getFullCourseDetails = async (req, res) => {
     //   });
     // }
 
-    let totalDurationInSeconds = 0
+    let totalDurationInSeconds = 0;
     courseDetails.courseContent.forEach((content) => {
       content.subSection.forEach((subSection) => {
-        const timeDurationInSeconds = parseInt(subSection.timeDuration)
-        totalDurationInSeconds += timeDurationInSeconds
-      })
-    })
+        const timeDurationInSeconds = parseInt(subSection.timeDuration);
+        totalDurationInSeconds += timeDurationInSeconds;
+      });
+    });
 
-    const totalDuration = convertSecondsToDuration(totalDurationInSeconds)
+    const totalDuration = convertSecondsToDuration(totalDurationInSeconds);
 
     return res.status(200).json({
       success: true,
@@ -361,15 +360,14 @@ exports.getFullCourseDetails = async (req, res) => {
           ? courseProgressCount?.completedVideos
           : [],
       },
-    })
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
       message: error.message,
-    })
+    });
   }
-}
-
+};
 
 //getInstructorAllCourses
 exports.getInstructorCourses = async (req, res) => {
@@ -380,7 +378,7 @@ exports.getInstructorCourses = async (req, res) => {
     //find instructor by id and populate Courses data
     const instructorCourses = await Course.find({
       instructor: instructorId,
-    }).sort({ createdAt: -1 })
+    }).sort({ createdAt: -1 });
 
     //Validation
     if (!instructorCourses) {
@@ -408,51 +406,59 @@ exports.getInstructorCourses = async (req, res) => {
 // Delete the Course
 exports.deleteCourse = async (req, res) => {
   try {
-    const { courseId } = req.body
+    const { courseId } = req.body;
 
     // Find the course
-    const course = await Course.findById(courseId)
+    const course = await Course.findById(courseId);
     if (!course) {
-      return res.status(404).json({ message: "Course not found" })
+      return res.status(404).json({ message: "Course not found" });
     }
 
     // Unenroll students from the course
-    const studentsEnrolled = course.studentsEnrolled
+    const studentsEnrolled = course.studentsEnrolled;
     for (const studentId of studentsEnrolled) {
       await User.findByIdAndUpdate(studentId, {
         $pull: { courses: courseId },
-      })
+      });
+    }
+
+    // Find the category
+    const category = await Category.findOne({ courses: courseId });
+    if (category) {
+      // Remove the course ID from the category's array
+      category.courses = category.courses.filter((id) => id !== courseId);
+      await category.save();
     }
 
     // Delete sections and sub-sections
-    const courseSections = course.courseContent
+    const courseSections = course.courseContent;
     for (const sectionId of courseSections) {
       // Delete sub-sections of the section
-      const section = await Section.findById(sectionId)
+      const section = await Section.findById(sectionId);
       if (section) {
-        const subSections = section.subSection
+        const subSections = section.subSection;
         for (const subSectionId of subSections) {
-          await SubSection.findByIdAndDelete(subSectionId)
+          await SubSection.findByIdAndDelete(subSectionId);
         }
       }
 
       // Delete the section
-      await Section.findByIdAndDelete(sectionId)
+      await Section.findByIdAndDelete(sectionId);
     }
 
     // Delete the course
-    await Course.findByIdAndDelete(courseId)
+    await Course.findByIdAndDelete(courseId);
 
     return res.status(200).json({
       success: true,
       message: "Course deleted successfully",
-    })
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Server error",
       error: error.message,
-    })
+    });
   }
-}
+};
