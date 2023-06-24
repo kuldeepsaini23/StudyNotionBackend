@@ -4,11 +4,14 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader");
 // Method for updating a profile
 exports.updateProfile = async (req, res) => {
 	try {
-		const { dateOfBirth = "", about = "", contactNumber, gender } = req.body;
+		const { firstName, lastName, dateOfBirth = "", about = "", contactNumber, gender } = req.body;
 		const id = req.user.id;
 
 		// Find the profile by id
 		const userDetails = await User.findById(id);
+		userDetails.firstName = firstName;
+		userDetails.lastName = lastName;
+		await userDetails.save();
 
 		const profile = await Profile.findById(userDetails.additionalDetails);
 
@@ -128,7 +131,15 @@ exports.getEnrolledCourses = async (req, res) => {
       const userDetails = await User.findOne({
         _id: userId,
       })
-        .populate("courses")
+        .populate({
+					path:"courses",
+					populate:{
+						path: "courseContent",
+						populate: {
+							path: "subSection",
+						},
+					}
+				})
         .exec()
 
 			//Validate
