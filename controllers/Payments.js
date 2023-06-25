@@ -171,7 +171,7 @@ const enrollStudents = async (courses, userId, res) => {
         enrolledStudent.email,
         `Successfully Enrolled into ${enrolledCourse.courseName}`,
         courseEnrollmentEmail(
-          enrollStudents.courseName,
+          enrolledStudent.courseName,
           `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
         )
       );
