@@ -37,6 +37,7 @@ exports.signup = async (req, res) => {
 				message: "All Fields are required",
 			});
 		}
+
 		// Check if password and confirm password match
 		if (password !== confirmPassword) {
 			return res.status(400).json({
@@ -128,14 +129,14 @@ exports.login = async (req, res) => {
 		}
 
 		// Find user with provided email
-		const user = await User.findOne({ email }).populate("additionalDetails");
+		const user = await User.findOne({ email }).populate(["additionalDetails"]);
 
 		// If user not found with provided email
 		if (!user) {
 			// Return 401 Unauthorized status code with error message
 			return res.status(401).json({
 				success: false,
-				message: `User is not Registered with Us Please SignUp to Continue`,
+				message: `User is not Registered`,
 			});
 		}
 
@@ -174,7 +175,7 @@ exports.login = async (req, res) => {
 		// Return 500 Internal Server Error status code with error message
 		return res.status(500).json({
 			success: false,
-			message: `Login Failure Please Try Again`,
+			message: `Login Failure, Please Try Again`,
 		});
 	}
 };
@@ -221,7 +222,7 @@ exports.sendotp = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error.message);
-		return res.status(500).json({ success: false, error: error.message });
+		return res.status(500).json({ success: false, error: error.message, message:"Otp validation failed" });
 	}
 };
 

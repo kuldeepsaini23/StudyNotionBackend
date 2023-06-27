@@ -59,5 +59,11 @@ exports.contact = async (req, res) => {
       message: "Conatct me Details create successfully",
       data: contactDetails,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in conatcus handler", error.message)
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong"
+    })
+  }
 };

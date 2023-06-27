@@ -242,9 +242,12 @@ exports.getCourseDetails = async (req, res) => {
     const courseDetails = await Course.findById(courseId)
     .populate({
       path: "instructor",
-      populate: {
+      populate:[ {
         path: "additionalDetails",
       },
+      {
+        path: "courses",
+      },]
     })
       .populate("category")
       .populate("ratingAndReviews")

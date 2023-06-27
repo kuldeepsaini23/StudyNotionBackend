@@ -52,6 +52,12 @@ const userSchema = new mongoose.Schema(
 				ref: "Course",
 			},
 		],
+		socials: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Social",
+			},
+		],
 		token: {
 			type: String,
 		},
@@ -68,6 +74,7 @@ const userSchema = new mongoose.Schema(
 				ref: "courseProgress",
 			},
 		],
+
 
 		// Add timestamps for when the document is created and last modified
 	},

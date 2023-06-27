@@ -2,6 +2,7 @@
 const Section = require("../models/Section");
 const SubSection = require("../models/SubSection");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const { convertSecondsToDuration } = require("../utils/secToDuration");
 
 // Create a new sub-section for a given section
 exports.createSubSection = async (req, res) => {
@@ -23,11 +24,14 @@ exports.createSubSection = async (req, res) => {
       video,
       process.env.FOLDER_NAME
     );
-    console.log(uploadDetails);
+    // console.log(uploadDetails);
+
+    const totalDuration = convertSecondsToDuration(`${uploadDetails.duration}`);
+
     // Create a new sub-section with the necessary information
     const SubSectionDetails = await SubSection.create({
       title: title,
-      timeDuration: `${uploadDetails.duration}`,
+      timeDuration: totalDuration,
       description: description,
       videoUrl: uploadDetails.secure_url,
     });
