@@ -1,6 +1,10 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const CourseProgress = require("../models/CourseProgress")
+const { convertSecondsToDuration } = require("../utils/secToDuration");
+
+
 // Method for updating a profile
 exports.updateProfile = async (req, res) => {
 	try {
@@ -150,11 +154,58 @@ exports.getEnrolledCourses = async (req, res) => {
         })
       }
 
-			//return Courses in which student is enrolled
-      return res.status(200).json({
-        success: true,
-        data: userDetails.courses,
-      })
+			// const courseId = userDetails.courses._id;
+			// let courseProgressCount = await CourseProgress.findOne({
+			// 	courseID: courseId,
+			// 	userId: userId,
+			// });
+	
+			// console.log("courseProgressCount : ", courseProgressCount);
+	
+			// if (!userDetails.courses				) {
+			// 	return res.status(400).json({
+			// 		success: false,
+			// 		message: `Could not find course with id: ${courseId}`,
+			// 	});
+			// }
+	
+			// if (courseDetails.status === "Draft") {
+			//   return res.status(403).json({
+			//     success: false,
+			//     message: `Accessing a draft course is forbidden`,
+			//   });
+			// }
+	
+			// let totalDurationInSeconds = 0;
+			// userDetails.courses.courseContent.forEach((content) => {
+			// 	content.subSection.forEach((subSection) => {
+			// 		const timeDurationInSeconds = parseInt(subSection.timeDuration);
+			// 		totalDurationInSeconds += timeDurationInSeconds;
+			// 	});
+			// });
+	
+			// const totalDuration = convertSecondsToDuration(totalDurationInSeconds);
+	
+			// return res.status(200).json({
+			// 	success: true,
+			// 	data: {
+			// 		courseDetails,
+			// 		totalDuration,
+			// 		completedVideos: courseProgressCount?.completedVideos
+			// 			? courseProgressCount?.completedVideos
+			// 			: [],
+			// 	},
+			// });
+
+			
+			return res.status(200).json({
+				success: true,
+				data: userDetails.courses,
+			});
+
+
+			
+
     } catch (error) {
       return res.status(500).json({
         success: false,
