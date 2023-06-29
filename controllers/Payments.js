@@ -7,6 +7,7 @@ const {paymentSuccessEmail} = require("../mail/templates/paymentSuccessEmail")
 
 const { default: mongoose } = require("mongoose");
 const crypto = require("crypto");
+const CourseProgress = require("../models/CourseProgress");
 
 // * For mutiple at a time and without webHook
 exports.capturePayment = async (req, res) => {
@@ -148,12 +149,20 @@ const enrollStudents = async (courses, userId, res) => {
         });
       }
 
+        //progress of a course
+        const courseProgress = await CourseProgress.create({
+          courseID: courseId,
+          userId,
+          completedVideos:[],
+        })
+
       //Add CourseId in Student Courses
       const enrolledStudent = await User.findByIdAndUpdate(
         userId,
         {
           $push: {
             courses: courseId,
+            courseProgress:courseProgress._id,
           },
         },
         { new: true }
@@ -165,6 +174,8 @@ const enrollStudents = async (courses, userId, res) => {
           message: "User Not Found",
         });
       }
+
+    
 
       // Sending Mail to user
       const emailResponse = await mailSender(
