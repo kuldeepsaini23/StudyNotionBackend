@@ -18,7 +18,12 @@ exports.instructorProfile = async (req, res) => {
     .populate({
       path: "courses",
       match: { status: "Published" },
-      populate: ["ratingAndReviews", "category"]
+      populate: [{
+        path:"ratingAndReviews",
+        populate:{
+          path:"user"
+        }
+      }, "category"]
     })
     .exec()
 

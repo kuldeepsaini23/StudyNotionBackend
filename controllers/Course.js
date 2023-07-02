@@ -103,8 +103,8 @@ exports.createCourse = async (req, res) => {
       { new: true }
     );
 
-    // Add the new course to the Categories
-    await Category.findByIdAndUpdate(
+     // Add the new course to the Categories
+     const categoryDetails2 = await Category.findByIdAndUpdate(
       { _id: category },
       {
         $push: {
@@ -112,7 +112,8 @@ exports.createCourse = async (req, res) => {
         },
       },
       { new: true }
-    );
+    )
+    console.log("HEREEEEEEEE", categoryDetails2)
     // Return the new course and a success message
     res.status(200).json({
       success: true,
@@ -247,10 +248,16 @@ exports.getCourseDetails = async (req, res) => {
       },
       {
         path: "courses",
+
       },]
     })
       .populate("category")
-      .populate("ratingAndReviews")
+      .populate({
+        path:"ratingAndReviews",
+        populate:{
+          path:"user"
+        }
+      })
       .populate({
         path: "courseContent",
         populate: {
