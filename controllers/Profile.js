@@ -129,7 +129,7 @@ exports.updateDisplayPicture = async (req, res) => {
       data: updatedProfile,
     });
   } catch (error) {
-    console.log("ERRO IN UPDATING DISPLAY PICTURE...", error.message)
+    console.log("ERRO IN UPDATING DISPLAY PICTURE...", error)
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
