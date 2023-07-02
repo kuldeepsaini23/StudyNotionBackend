@@ -1,12 +1,13 @@
 const express = require("express")
 const router = express.Router()
-const { auth, isAdmin } = require("../middlewares/auth")
+const { auth, isAdmin, isInstructor } = require("../middlewares/auth")
 const {
   deleteAccount,
   updateProfile,
   getAllUserDetails,
   updateDisplayPicture,
   getEnrolledCourses,
+  instructorDashboard,
 } = require("../controllers/Profile")
 const { instructorProfile } = require("../controllers/User")
 
@@ -23,8 +24,12 @@ router.get("/getUserDetails", auth, getAllUserDetails)
 router.get("/getEnrolledCourses", auth, getEnrolledCourses)
 router.put("/updateDisplayPicture", auth, updateDisplayPicture)
 router.post("/userProfile", instructorProfile)
+// Instructor dashboard
+router.get("/instructorDashboard",auth,isInstructor, instructorDashboard)
 
-
+// ********************************************************************************************************
+//                                      Admin routes
+// ********************************************************************************************************
 //*Admin getting all user data
 router.get("/allUserData",auth, isAdmin, getAllUsers)
 router.delete("/deleteAccountByAdmin",auth, isAdmin, deleteAccountByAdmin)
