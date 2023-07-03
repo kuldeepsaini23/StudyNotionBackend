@@ -5,8 +5,8 @@ const User = require("../models/User");
 exports.createSocial = async (req, res) => {
   try {
     // Get user ID from request object
-    const userId = req.user.id;
-    const { socialName, link } = req.body;
+    // const userId = req.user.id;
+    const { socialName, link, userId } = req.body;
 
     // Check if any of the required fields are missing
     if (!socialName || !link) {

@@ -92,6 +92,7 @@ exports.getAllUserDetails = async (req, res) => {
     const id = req.user.id;
     const userDetails = await User.findById(id)
       .populate("additionalDetails")
+      .populate("socials")
       .exec();
     console.log(userDetails);
     res.status(200).json({

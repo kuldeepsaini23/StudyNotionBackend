@@ -12,6 +12,7 @@ const {
 const { instructorProfile } = require("../controllers/User")
 
 const {getAllUsers, deleteAccountByAdmin} = require("../controllers/Admin");
+const { createSocial } = require("../controllers/Socials")
 
 // ********************************************************************************************************
 //                                      Profile routes
@@ -33,5 +34,12 @@ router.get("/instructorDashboard",auth,isInstructor, instructorDashboard)
 //*Admin getting all user data
 router.get("/allUserData",auth, isAdmin, getAllUsers)
 router.delete("/deleteAccountByAdmin",auth, isAdmin, deleteAccountByAdmin)
+
+// ********************************************************************************************************
+//                                      Admin routes
+// ********************************************************************************************************
+router.post("/createSocial",createSocial)
+
+
 
 module.exports = router
