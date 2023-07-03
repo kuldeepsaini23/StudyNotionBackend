@@ -23,6 +23,7 @@ exports.createCourse = async (req, res) => {
       category,
       status,
       instructions: _instructions,
+      courseLanguage,
     } = req.body;
 
     // Get thumbnail image from request files
@@ -40,7 +41,8 @@ exports.createCourse = async (req, res) => {
       !price ||
       !tag ||
       !thumbnail ||
-      !category
+      !category ||
+      !courseLanguage
     ) {
       return res.status(400).json({
         success: false,
@@ -88,6 +90,7 @@ exports.createCourse = async (req, res) => {
       thumbnail: thumbnailImage.secure_url,
       status: status,
       instructions: instructions,
+      language : courseLanguage,
     });
 
     // Add the new course to the User Schema of the Instructor
