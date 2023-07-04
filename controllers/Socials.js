@@ -5,8 +5,8 @@ const User = require("../models/User");
 exports.createSocial = async (req, res) => {
   try {
     // Get user ID from request object
-    // const userId = req.user.id;
-    const { socialName, link, userId } = req.body;
+    const userId = req.user.id;
+    const { socialName, link } = req.body;
 
     // Check if any of the required fields are missing
     if (!socialName || !link) {
@@ -20,6 +20,7 @@ exports.createSocial = async (req, res) => {
     const newSocialLink = Social.create({
       name: socialName,
       link,
+      user:userId,
     });
 
     // find user
@@ -93,8 +94,9 @@ exports.updateSocial = async (req, res) => {
 exports.deleteSocial = async (req, res) => {
 	try {
 		const id = req.user.id;
+    const {socialId} = req.body;
 		
-		const user = await User.findById({ _id: id });
+		const user = await User.findByIdAndUpdate({ _id: id });
 		if (!user) {
 			return res.status(404).json({
 				success: false,
@@ -102,11 +104,21 @@ exports.deleteSocial = async (req, res) => {
 			});
 		}
 		// Delete Assosiated Profile with the User
-		await Social.findByIdAndDelete({ _id: user.socials });
-		res.status(200).json({
-			success: true,
-			message: "User Social deleted successfully",
-		});
+		await Social.findByIdAndDelete({ _id: socialId });
+		
+
+    const userDetails = await User.findByIdAndUpdate({_id: user._id},
+      {
+        $pull:{socials:socialId}
+      },
+      {new:true})
+
+      return res.status(200).json({
+        success: true,
+        message: "User Social deleted successfully",
+        data: userDetails
+      });
+
 	} catch (error) {
 		console.log(error);
 		res
