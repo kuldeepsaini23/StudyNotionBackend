@@ -40,7 +40,7 @@ router.delete("/deleteAccountByAdmin",auth, isAdmin, deleteAccountByAdmin)
 // ********************************************************************************************************
 router.post("/createSocial", auth, isInstructor, createSocial);
 router.put("/updateSocial", auth , isInstructor, updateSocial);
-router.delete("/deleteSocial", auth, isInstructor, deleteSocial);
+router.post("/deleteSocial", auth, isInstructor, deleteSocial);
 
 
 

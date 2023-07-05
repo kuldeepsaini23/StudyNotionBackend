@@ -6,44 +6,44 @@ exports.createSocial = async (req, res) => {
   try {
     // Get user ID from request object
     const userId = req.user.id;
-    const { socialName, link } = req.body;
+    const { platform, link } = req.body;
 
+   
     // Check if any of the required fields are missing
-    if (!socialName || !link) {
+    if (!platform || !link) {
       return res.status(400).json({
         success: false,
         message: "All Fields are Mandatory",
       });
     }
 
+   
     //created a object of social
-    const newSocialLink = Social.create({
-      name: socialName,
+    const newSocialLink = await Social.create({
+      name: platform,
       link,
       user:userId,
     });
 
-    // find user
-    const user = User.findById(userId);
-    if(!user){
-      return res.status(400).json({
-        success: false,
-        message: "Cannot find the User",
-      });
-    }
 
-    const userDetails = User.findByIdAndUpdate({_id: userId},
+    console.log("Clearrr")
+
+
+    const userDetails = await User.findByIdAndUpdate(
+      userId,
       {
         $push: {
           socials: newSocialLink._id,
         },
       },
       { new: true }
-    )
+    ).populate(["additionalDetails","socials"]);
+
     
     res.status(200).json({
       success: true,
-      message: `${socialName} Link created Successfully`,
+      message: `${platform} Link created Successfully`,
+      data:userDetails
     });
 
   } catch (error) {
@@ -60,27 +60,22 @@ exports.createSocial = async (req, res) => {
 
 exports.updateSocial = async (req, res) => {
 	try {
-		const { socialName, link } = req.body;
+		const { socialId, link } = req.body;
 		const id = req.user.id;
-
-		// Find the profile by id
-		const userDetails = await User.findById(id);
-
-		const social = await Social.findById(userDetails.socials);
+    console.log(link);
+		const social = await Social.findById(socialId);
 
 		// Update the profile fields
-		social.name = socialName || social.name;
-		social.about = link || social.link;
-
+		social.link = link || social.link;
 
 		// Save the updated profile
 		await social.save();
-		const updatedUserDetails = await User.populate(userDetails, "socials");
+		const updatedUserDetails = await User.findById(id).populate(["additionalDetails","socials"]);
 
 		return res.json({
 			success: true,
 			message: "Socials updated successfully",
-			updatedUserDetails,
+			data:updatedUserDetails,
 		});
 	} catch (error) {
 		console.log(error);
@@ -96,22 +91,24 @@ exports.deleteSocial = async (req, res) => {
 		const id = req.user.id;
     const {socialId} = req.body;
 		
-		const user = await User.findByIdAndUpdate({ _id: id });
-		if (!user) {
-			return res.status(404).json({
-				success: false,
-				message: "User not found",
-			});
-		}
+		// const user = await User.findByIdAndUpdate(id);
+		// if (!user) {
+		// 	return res.status(404).json({
+		// 		success: false,
+		// 		message: "User not found",
+		// 	});
+		// }
 		// Delete Assosiated Profile with the User
-		await Social.findByIdAndDelete({ _id: socialId });
-		
-
-    const userDetails = await User.findByIdAndUpdate({_id: user._id},
+    const userDetails = await User.findByIdAndUpdate(id,
       {
         $pull:{socials:socialId}
       },
-      {new:true})
+      {new:true}).populate(["additionalDetails","socials"])
+      
+		await Social.findByIdAndDelete({ _id: socialId });
+		
+
+   
 
       return res.status(200).json({
         success: true,
