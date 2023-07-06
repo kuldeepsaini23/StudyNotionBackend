@@ -441,12 +441,11 @@ exports.deleteCourse = async (req, res) => {
     }
 
     // Find the category
-    const category = await Category.findOne({ courses: courseId });
-    if (category) {
-      // Remove the course ID from the category's array
-      category.courses = category.courses.filter((id) => id !== courseId);
-      await category.save();
-    }
+    const category = await Category.findByIdAndUpdate(course.category,{
+      $pull: {courses: courseId}
+    });
+
+    console.log(category)
 
     // Delete sections and sub-sections
     const courseSections = course.courseContent;
