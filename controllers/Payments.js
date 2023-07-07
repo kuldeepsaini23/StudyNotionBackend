@@ -182,12 +182,13 @@ const enrollStudents = async (courses, userId, res) => {
         enrolledStudent.email,
         `Successfully Enrolled into ${enrolledCourse.courseName}`,
         courseEnrollmentEmail(
-          enrolledStudent.courseName,
+          enrolledCourse.courseName,
           `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
         )
-      );
+      )
 
-      // console.log("Mail Sent Successfully", emailResponse.response);
+      console.log("Email sent successfully: ", emailResponse.response)
+
     } catch (error) {
       console.log(
         "Error while enrolling studen in course and vice versa",
