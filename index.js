@@ -5,7 +5,8 @@ const userRoutes = require("./routes/User");
 const profileRoutes = require("./routes/Profile");
 const paymentRoutes = require("./routes/Payments");
 const courseRoutes = require("./routes/Course");
-const contactRoute = require("./routes/Contact")
+const contactRoute = require("./routes/Contact");
+const searchRoute = require("./routes/Search");
 
 const database = require("./config/database");
 const cookieParser = require("cookie-parser");
@@ -24,7 +25,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin:["http://localhost:3000", "https://study-notion-lake.vercel.app"],
+		origin:["http://localhost:3000", "https://study-notion-lake.vercel.app","https://studynotion.tech"],
 		credentials:true,
 	})
 )
@@ -44,6 +45,7 @@ app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/reach", contactRoute);
+app.use("/api/v1/search", searchRoute)
 
 
 //def route
