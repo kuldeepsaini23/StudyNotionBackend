@@ -1,6 +1,6 @@
 const RatingAndReview = require("../models/RatingAndReview");
 const Course = require("../models/Course");
-const { mongo, default: mongoose } = require("mongoose");
+const {  default: mongoose } = require("mongoose");
 
 //createRating
 exports.createRating = async (req, res) => {
@@ -116,7 +116,6 @@ exports.getAverageRating = async (req, res) => {
 
 
 //getAllRatingAndReviews
-
 exports.getAllRating = async (req, res) => {
     try{
             const allReviews = await RatingAndReview.find({})
