@@ -48,7 +48,7 @@ exports.contact = async (req, res) => {
     }
 
     const mailSendToMe = await mailSender(
-      `studynotion@gmail.com`,
+      `infostudynotion@gmail.com`,
       "You got a Response!!",
       contactusResponsetemplate(contactDetails)
     );
