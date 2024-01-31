@@ -21,10 +21,10 @@ exports.instructorProfile = async (req, res) => {
       populate: [{
         path:"ratingAndReviews",
         populate:{
-          path:"user"
+          path:"user",
         }
       }, "category"]
-    })
+    }).populate("socials")
     .exec()
 
     if(!InstructorDetails){
